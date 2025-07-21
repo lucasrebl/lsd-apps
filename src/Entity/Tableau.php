@@ -19,11 +19,11 @@ class Tableau
     private ?string $nom_phase = null;
 
     #[ORM\Column(length: 50, nullable: true)]
-    private ?string $odre = null;
+    private ?string $ordre = null;
 
     #[ORM\ManyToOne(inversedBy: 'tableaus')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?tournoi $id_tournoi = null;
+    #[ORM\JoinColumn(nullable: false, referencedColumnName: 'id_tournoi')]
+    private ?Tournoi $id_tournoi = null;
 
     #[ORM\Column]
     private ?\DateTime $date_creation = null;
@@ -56,24 +56,24 @@ class Tableau
         return $this;
     }
 
-    public function getOdre(): ?string
+    public function getOrdre(): ?string
     {
-        return $this->odre;
+        return $this->ordre;
     }
 
-    public function setOdre(?string $odre): static
+    public function setOrdre(?string $ordre): static
     {
-        $this->odre = $odre;
+        $this->ordre = $ordre;
 
         return $this;
     }
 
-    public function getIdTournoi(): ?tournoi
+    public function getIdTournoi(): ?Tournoi
     {
         return $this->id_tournoi;
     }
 
-    public function setIdTournoi(?tournoi $id_tournoi): static
+    public function setIdTournoi(?Tournoi $id_tournoi): static
     {
         $this->id_tournoi = $id_tournoi;
 

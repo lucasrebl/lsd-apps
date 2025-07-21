@@ -14,12 +14,12 @@ class StatistiqueEquipeTournoi
     private ?int $id_stats = null;
 
     #[ORM\ManyToOne(inversedBy: 'statistiqueEquipeTournois')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?equipe $id_equipe = null;
+    #[ORM\JoinColumn(nullable: false, referencedColumnName: 'id_equipe')]
+    private ?Equipe $id_equipe = null;
 
     #[ORM\ManyToOne(inversedBy: 'statistiqueEquipeTournois')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?tournoi $id_tournoi = null;
+    #[ORM\JoinColumn(nullable: false, referencedColumnName: 'id_tournoi')]
+    private ?Tournoi $id_tournoi = null;
 
     #[ORM\Column]
     private ?int $nb_matchs_joués = null;
@@ -44,24 +44,24 @@ class StatistiqueEquipeTournoi
         return $this->id_stats;
     }
 
-    public function getIdEquipe(): ?equipe
+    public function getIdEquipe(): ?Equipe
     {
         return $this->id_equipe;
     }
 
-    public function setIdEquipe(?equipe $id_equipe): static
+    public function setIdEquipe(?Equipe $id_equipe): static
     {
         $this->id_equipe = $id_equipe;
 
         return $this;
     }
 
-    public function getIdTournoi(): ?tournoi
+    public function getIdTournoi(): ?Tournoi
     {
         return $this->id_tournoi;
     }
 
-    public function setIdTournoi(?tournoi $id_tournoi): static
+    public function setIdTournoi(?Tournoi $id_tournoi): static
     {
         $this->id_tournoi = $id_tournoi;
 

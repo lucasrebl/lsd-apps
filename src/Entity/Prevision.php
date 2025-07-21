@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\PrevisionRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PrevisionRepository::class)]
@@ -15,24 +13,21 @@ class Prevision
     #[ORM\Column]
     private ?int $id_prevision = null;
 
-    /**
-     * @var Collection<int, matchs>
-     */
-    #[ORM\OneToMany(targetEntity: matchs::class, mappedBy: 'prevision')]
-    private Collection $id_match;
+    #[ORM\OneToOne(inversedBy: 'prevision')]
+    #[ORM\JoinColumn(nullable: false, referencedColumnName: 'id_match')]
+    private ?Matchs $match = null;
 
     #[ORM\Column]
-    private ?float $probabilité_victoire_equipe1 = null;
+    private ?float $probabilite_victoire_equipe1 = null;
 
     #[ORM\Column]
-    private ?float $probabilité_victoire_equipe2 = null;
+    private ?float $probabilite_victoire_equipe2 = null;
 
     #[ORM\Column]
     private ?\DateTime $date_creation = null;
 
     public function __construct()
     {
-        $this->id_match = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -40,56 +35,38 @@ class Prevision
         return $this->id_prevision;
     }
 
-    /**
-     * @return Collection<int, matchs>
-     */
-    public function getIdMatch(): Collection
+    public function getMatch(): ?Matchs
     {
-        return $this->id_match;
+        return $this->match;
     }
 
-    public function addIdMatch(matchs $idMatch): static
+    public function setMatch(?Matchs $match): static
     {
-        if (!$this->id_match->contains($idMatch)) {
-            $this->id_match->add($idMatch);
-            $idMatch->setPrevision($this);
-        }
+        $this->match = $match;
 
         return $this;
     }
 
-    public function removeIdMatch(matchs $idMatch): static
+    public function getProbabiliteVictoireEquipe1(): ?float
     {
-        if ($this->id_match->removeElement($idMatch)) {
-            // set the owning side to null (unless already changed)
-            if ($idMatch->getPrevision() === $this) {
-                $idMatch->setPrevision(null);
-            }
-        }
+        return $this->probabilite_victoire_equipe1;
+    }
+
+    public function setProbabiliteVictoireEquipe1(float $probabilite_victoire_equipe1): static
+    {
+        $this->probabilite_victoire_equipe1 = $probabilite_victoire_equipe1;
 
         return $this;
     }
 
-    public function getProbabilitéVictoireEquipe1(): ?float
+    public function getProbabiliteVictoireEquipe2(): ?float
     {
-        return $this->probabilité_victoire_equipe1;
+        return $this->probabilite_victoire_equipe2;
     }
 
-    public function setProbabilitéVictoireEquipe1(float $probabilité_victoire_equipe1): static
+    public function setProbabiliteVictoireEquipe2(float $probabilite_victoire_equipe2): static
     {
-        $this->probabilité_victoire_equipe1 = $probabilité_victoire_equipe1;
-
-        return $this;
-    }
-
-    public function getProbabilitéVictoireEquipe2(): ?float
-    {
-        return $this->probabilité_victoire_equipe2;
-    }
-
-    public function setProbabilitéVictoireEquipe2(float $probabilité_victoire_equipe2): static
-    {
-        $this->probabilité_victoire_equipe2 = $probabilité_victoire_equipe2;
+        $this->probabilite_victoire_equipe2 = $probabilite_victoire_equipe2;
 
         return $this;
     }

@@ -42,14 +42,14 @@ class Equipe
     /**
      * @var Collection<int, PouleEquipe>
      */
-    #[ORM\ManyToMany(targetEntity: PouleEquipe::class, mappedBy: 'id_equipe')]
+    #[ORM\OneToMany(targetEntity: PouleEquipe::class, mappedBy: 'id_equipe')]
     private Collection $pouleEquipes;
 
     /**
-     * @var Collection<int, MacthEquipe>
+     * @var Collection<int, MatchEquipe>
      */
-    #[ORM\OneToMany(targetEntity: MacthEquipe::class, mappedBy: 'id_equipe')]
-    private Collection $macthEquipes;
+    #[ORM\OneToMany(targetEntity: MatchEquipe::class, mappedBy: 'id_equipe')]
+    private Collection $matchEquipes;
 
     /**
      * @var Collection<int, StatistiqueEquipeTournoi>
@@ -61,7 +61,7 @@ class Equipe
     {
         $this->joueurs = new ArrayCollection();
         $this->pouleEquipes = new ArrayCollection();
-        $this->macthEquipes = new ArrayCollection();
+        $this->matchEquipes = new ArrayCollection();
         $this->statistiqueEquipeTournois = new ArrayCollection();
     }
 
@@ -184,7 +184,7 @@ class Equipe
     {
         if (!$this->pouleEquipes->contains($pouleEquipe)) {
             $this->pouleEquipes->add($pouleEquipe);
-            $pouleEquipe->addIdEquipe($this);
+            $pouleEquipe->setIdEquipe($this);
         }
 
         return $this;
@@ -193,36 +193,39 @@ class Equipe
     public function removePouleEquipe(PouleEquipe $pouleEquipe): static
     {
         if ($this->pouleEquipes->removeElement($pouleEquipe)) {
-            $pouleEquipe->removeIdEquipe($this);
+            // set the owning side to null (unless already changed)
+            if ($pouleEquipe->getIdEquipe() === $this) {
+                $pouleEquipe->setIdEquipe(null);
+            }
         }
 
         return $this;
     }
 
     /**
-     * @return Collection<int, MacthEquipe>
+     * @return Collection<int, MatchEquipe>
      */
-    public function getMacthEquipes(): Collection
+    public function getMatchEquipes(): Collection
     {
-        return $this->macthEquipes;
+        return $this->matchEquipes;
     }
 
-    public function addMacthEquipe(MacthEquipe $macthEquipe): static
+    public function addMatchEquipe(MatchEquipe $matchEquipe): static
     {
-        if (!$this->macthEquipes->contains($macthEquipe)) {
-            $this->macthEquipes->add($macthEquipe);
-            $macthEquipe->setIdEquipe($this);
+        if (!$this->matchEquipes->contains($matchEquipe)) {
+            $this->matchEquipes->add($matchEquipe);
+            $matchEquipe->setIdEquipe($this);
         }
 
         return $this;
     }
 
-    public function removeMacthEquipe(MacthEquipe $macthEquipe): static
+    public function removeMatchEquipe(MatchEquipe $matchEquipe): static
     {
-        if ($this->macthEquipes->removeElement($macthEquipe)) {
+        if ($this->matchEquipes->removeElement($matchEquipe)) {
             // set the owning side to null (unless already changed)
-            if ($macthEquipe->getIdEquipe() === $this) {
-                $macthEquipe->setIdEquipe(null);
+            if ($matchEquipe->getIdEquipe() === $this) {
+                $matchEquipe->setIdEquipe(null);
             }
         }
 

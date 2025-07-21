@@ -2,22 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\MacthEquipe;
+use App\Entity\MatchEquipe;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<MacthEquipe>
+ * @extends ServiceEntityRepository<MatchEquipe>
  */
-class MacthEquipeRepository extends ServiceEntityRepository
+class MatchEquipeRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, MacthEquipe::class);
+        parent::__construct($registry, MatchEquipe::class);
     }
 
     //    /**
-    //     * @return MacthEquipe[] Returns an array of MacthEquipe objects
+    //     * @return MatchEquipe[] Returns an array of MatchEquipe objects
     //     */
     //    public function findByExampleField($value): array
     //    {
@@ -31,7 +31,7 @@ class MacthEquipeRepository extends ServiceEntityRepository
     //        ;
     //    }
 
-    //    public function findOneBySomeField($value): ?MacthEquipe
+    //    public function findOneBySomeField($value): ?MatchEquipe
     //    {
     //        return $this->createQueryBuilder('m')
     //            ->andWhere('m.exampleField = :val')

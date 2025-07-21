@@ -22,8 +22,8 @@ class Poule
     private ?string $categorie = null;
 
     #[ORM\ManyToOne(inversedBy: 'poules')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?tournoi $id_tournoi = null;
+    #[ORM\JoinColumn(nullable: false, referencedColumnName: 'id_tournoi')]
+    private ?Tournoi $id_tournoi = null;
 
     #[ORM\Column]
     private ?\DateTime $date_creation = null;
@@ -31,7 +31,7 @@ class Poule
     /**
      * @var Collection<int, PouleEquipe>
      */
-    #[ORM\ManyToMany(targetEntity: PouleEquipe::class, mappedBy: 'id_poule')]
+    #[ORM\OneToMany(targetEntity: PouleEquipe::class, mappedBy: 'id_poule')]
     private Collection $pouleEquipes;
 
     /**
@@ -75,12 +75,12 @@ class Poule
         return $this;
     }
 
-    public function getIdTournoi(): ?tournoi
+    public function getIdTournoi(): ?Tournoi
     {
         return $this->id_tournoi;
     }
 
-    public function setIdTournoi(?tournoi $id_tournoi): static
+    public function setIdTournoi(?Tournoi $id_tournoi): static
     {
         $this->id_tournoi = $id_tournoi;
 
@@ -111,7 +111,7 @@ class Poule
     {
         if (!$this->pouleEquipes->contains($pouleEquipe)) {
             $this->pouleEquipes->add($pouleEquipe);
-            $pouleEquipe->addIdPoule($this);
+            $pouleEquipe->setIdPoule($this);
         }
 
         return $this;
@@ -120,7 +120,10 @@ class Poule
     public function removePouleEquipe(PouleEquipe $pouleEquipe): static
     {
         if ($this->pouleEquipes->removeElement($pouleEquipe)) {
-            $pouleEquipe->removeIdPoule($this);
+            // set the owning side to null (unless already changed)
+            if ($pouleEquipe->getIdPoule() === $this) {
+                $pouleEquipe->setIdPoule(null);
+            }
         }
 
         return $this;

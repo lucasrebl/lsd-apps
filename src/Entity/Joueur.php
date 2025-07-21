@@ -23,8 +23,8 @@ class Joueur
     private ?string $poste = null;
 
     #[ORM\ManyToOne(inversedBy: 'joueurs')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?equipe $id_equipe = null;
+    #[ORM\JoinColumn(nullable: false, referencedColumnName: 'id_equipe')]
+    private ?Equipe $id_equipe = null;
 
     #[ORM\Column]
     private ?\DateTime $date_creation = null;
@@ -70,12 +70,12 @@ class Joueur
         return $this;
     }
 
-    public function getIdEquipe(): ?equipe
+    public function getIdEquipe(): ?Equipe
     {
         return $this->id_equipe;
     }
 
-    public function setIdEquipe(?equipe $id_equipe): static
+    public function setIdEquipe(?Equipe $id_equipe): static
     {
         $this->id_equipe = $id_equipe;
 

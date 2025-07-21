@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\ResultatRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: ResultatRepository::class)]
@@ -15,11 +13,9 @@ class Resultat
     #[ORM\Column]
     private ?int $id_resultat = null;
 
-    /**
-     * @var Collection<int, matchs>
-     */
-    #[ORM\OneToMany(targetEntity: matchs::class, mappedBy: 'resultat')]
-    private Collection $id_match;
+    #[ORM\OneToOne(inversedBy: 'resultat')]
+    #[ORM\JoinColumn(nullable: false, referencedColumnName: 'id_match')]
+    private ?Matchs $match = null;
 
     #[ORM\Column]
     private ?int $score_equipe1 = null;
@@ -50,7 +46,6 @@ class Resultat
 
     public function __construct()
     {
-        $this->id_match = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -58,32 +53,14 @@ class Resultat
         return $this->id_resultat;
     }
 
-    /**
-     * @return Collection<int, matchs>
-     */
-    public function getIdMatch(): Collection
+    public function getMatch(): ?Matchs
     {
-        return $this->id_match;
+        return $this->match;
     }
 
-    public function addIdMatch(matchs $idMatch): static
+    public function setMatch(?Matchs $match): static
     {
-        if (!$this->id_match->contains($idMatch)) {
-            $this->id_match->add($idMatch);
-            $idMatch->setResultat($this);
-        }
-
-        return $this;
-    }
-
-    public function removeIdMatch(matchs $idMatch): static
-    {
-        if ($this->id_match->removeElement($idMatch)) {
-            // set the owning side to null (unless already changed)
-            if ($idMatch->getResultat() === $this) {
-                $idMatch->setResultat(null);
-            }
-        }
+        $this->match = $match;
 
         return $this;
     }

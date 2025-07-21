@@ -25,37 +25,35 @@ class Matchs
     private ?string $phase = null;
 
     #[ORM\ManyToOne(inversedBy: 'matchs')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?poule $id_poule = null;
+    #[ORM\JoinColumn(nullable: false, referencedColumnName: 'id_poule')]
+    private ?Poule $id_poule = null;
 
     #[ORM\ManyToOne(inversedBy: 'matchs')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?tableau $id_tableau = null;
+    #[ORM\JoinColumn(nullable: false, referencedColumnName: 'id_tableau')]
+    private ?Tableau $id_tableau = null;
 
     #[ORM\ManyToOne(inversedBy: 'matchs')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?tournoi $id_tournoi = null;
+    #[ORM\JoinColumn(nullable: false, referencedColumnName: 'id_tournoi')]
+    private ?Tournoi $id_tournoi = null;
 
     #[ORM\Column]
     private ?\DateTime $date_creation = null;
 
     /**
-     * @var Collection<int, MacthEquipe>
+     * @var Collection<int, MatchEquipe>
      */
-    #[ORM\OneToMany(targetEntity: MacthEquipe::class, mappedBy: 'id_match')]
-    private Collection $macthEquipes;
+    #[ORM\OneToMany(targetEntity: MatchEquipe::class, mappedBy: 'id_match')]
+    private Collection $matchEquipes;
 
-    #[ORM\ManyToOne(inversedBy: 'id_match')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\OneToOne(mappedBy: 'match', cascade: ['persist', 'remove'])]
     private ?Resultat $resultat = null;
 
-    #[ORM\ManyToOne(inversedBy: 'id_match')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\OneToOne(mappedBy: 'match', cascade: ['persist', 'remove'])]
     private ?Prevision $prevision = null;
 
     public function __construct()
     {
-        $this->macthEquipes = new ArrayCollection();
+        $this->matchEquipes = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -99,36 +97,36 @@ class Matchs
         return $this;
     }
 
-    public function getIdPoule(): ?poule
+    public function getIdPoule(): ?Poule
     {
         return $this->id_poule;
     }
 
-    public function setIdPoule(?poule $id_poule): static
+    public function setIdPoule(?Poule $id_poule): static
     {
         $this->id_poule = $id_poule;
 
         return $this;
     }
 
-    public function getIdTableau(): ?tableau
+    public function getIdTableau(): ?Tableau
     {
         return $this->id_tableau;
     }
 
-    public function setIdTableau(?tableau $id_tableau): static
+    public function setIdTableau(?Tableau $id_tableau): static
     {
         $this->id_tableau = $id_tableau;
 
         return $this;
     }
 
-    public function getIdTournoi(): ?tournoi
+    public function getIdTournoi(): ?Tournoi
     {
         return $this->id_tournoi;
     }
 
-    public function setIdTournoi(?tournoi $id_tournoi): static
+    public function setIdTournoi(?Tournoi $id_tournoi): static
     {
         $this->id_tournoi = $id_tournoi;
 
@@ -148,29 +146,29 @@ class Matchs
     }
 
     /**
-     * @return Collection<int, MacthEquipe>
+     * @return Collection<int, MatchEquipe>
      */
-    public function getMacthEquipes(): Collection
+    public function getMatchEquipes(): Collection
     {
-        return $this->macthEquipes;
+        return $this->matchEquipes;
     }
 
-    public function addMacthEquipe(MacthEquipe $macthEquipe): static
+    public function addMatchEquipe(MatchEquipe $matchEquipe): static
     {
-        if (!$this->macthEquipes->contains($macthEquipe)) {
-            $this->macthEquipes->add($macthEquipe);
-            $macthEquipe->setIdMatch($this);
+        if (!$this->matchEquipes->contains($matchEquipe)) {
+            $this->matchEquipes->add($matchEquipe);
+            $matchEquipe->setIdMatch($this);
         }
 
         return $this;
     }
 
-    public function removeMacthEquipe(MacthEquipe $macthEquipe): static
+    public function removeMatchEquipe(MatchEquipe $matchEquipe): static
     {
-        if ($this->macthEquipes->removeElement($macthEquipe)) {
+        if ($this->matchEquipes->removeElement($matchEquipe)) {
             // set the owning side to null (unless already changed)
-            if ($macthEquipe->getIdMatch() === $this) {
-                $macthEquipe->setIdMatch(null);
+            if ($matchEquipe->getIdMatch() === $this) {
+                $matchEquipe->setIdMatch(null);
             }
         }
 
