@@ -6,8 +6,12 @@ use App\Repository\EquipeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: EquipeRepository::class)]
+#[UniqueEntity(fields: ['email'], message: 'Cet email est déjà utilisé.')]
+#[UniqueEntity(fields: ['telephone'], message: 'Ce numéro de téléphone est déjà utilisé.')]
 class Equipe
 {
     #[ORM\Id]
@@ -24,10 +28,13 @@ class Equipe
     #[ORM\Column(length: 100)]
     private ?string $nom_capitaine = null;
 
-    #[ORM\Column(length: 100)]
+    #[ORM\Column(length: 100, unique: true)]
+    #[Assert\NotBlank]
+    #[Assert\Email(message: "L'adresse email '{{ value }}' n'est pas valide.")]
     private ?string $email = null;
 
-    #[ORM\Column(length: 20)]
+    #[ORM\Column(length: 20, unique: true)] // unique ici au niveau BDD
+    #[Assert\NotBlank]
     private ?string $telephone = null;
 
     #[ORM\Column]
@@ -63,6 +70,7 @@ class Equipe
         $this->pouleEquipes = new ArrayCollection();
         $this->matchEquipes = new ArrayCollection();
         $this->statistiqueEquipeTournois = new ArrayCollection();
+        $this->date_creation = new \DateTime(); // ← Initialisation automatique
     }
 
     public function getId(): ?int
@@ -78,7 +86,6 @@ class Equipe
     public function setNom(string $nom): static
     {
         $this->nom = $nom;
-
         return $this;
     }
 
@@ -90,7 +97,6 @@ class Equipe
     public function setPays(string $pays): static
     {
         $this->pays = $pays;
-
         return $this;
     }
 
@@ -102,7 +108,6 @@ class Equipe
     public function setNomCapitaine(string $nom_capitaine): static
     {
         $this->nom_capitaine = $nom_capitaine;
-
         return $this;
     }
 
@@ -114,7 +119,6 @@ class Equipe
     public function setEmail(string $email): static
     {
         $this->email = $email;
-
         return $this;
     }
 
@@ -126,20 +130,12 @@ class Equipe
     public function setTelephone(string $telephone): static
     {
         $this->telephone = $telephone;
-
         return $this;
     }
 
     public function getDateCreation(): ?\DateTime
     {
         return $this->date_creation;
-    }
-
-    public function setDateCreation(\DateTime $date_creation): static
-    {
-        $this->date_creation = $date_creation;
-
-        return $this;
     }
 
     /**
@@ -163,7 +159,6 @@ class Equipe
     public function removeJoueur(Joueur $joueur): static
     {
         if ($this->joueurs->removeElement($joueur)) {
-            // set the owning side to null (unless already changed)
             if ($joueur->getIdEquipe() === $this) {
                 $joueur->setIdEquipe(null);
             }
@@ -193,7 +188,6 @@ class Equipe
     public function removePouleEquipe(PouleEquipe $pouleEquipe): static
     {
         if ($this->pouleEquipes->removeElement($pouleEquipe)) {
-            // set the owning side to null (unless already changed)
             if ($pouleEquipe->getIdEquipe() === $this) {
                 $pouleEquipe->setIdEquipe(null);
             }
@@ -223,7 +217,6 @@ class Equipe
     public function removeMatchEquipe(MatchEquipe $matchEquipe): static
     {
         if ($this->matchEquipes->removeElement($matchEquipe)) {
-            // set the owning side to null (unless already changed)
             if ($matchEquipe->getIdEquipe() === $this) {
                 $matchEquipe->setIdEquipe(null);
             }
@@ -253,7 +246,6 @@ class Equipe
     public function removeStatistiqueEquipeTournoi(StatistiqueEquipeTournoi $statistiqueEquipeTournoi): static
     {
         if ($this->statistiqueEquipeTournois->removeElement($statistiqueEquipeTournoi)) {
-            // set the owning side to null (unless already changed)
             if ($statistiqueEquipeTournoi->getIdEquipe() === $this) {
                 $statistiqueEquipeTournoi->setIdEquipe(null);
             }

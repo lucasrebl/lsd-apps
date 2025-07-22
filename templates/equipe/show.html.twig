@@ -1,0 +1,18 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Équipe {{ equipe.nom }}{% endblock %}
+
+{% block body %}
+    <h1>Détails de l'équipe</h1>
+
+    <ul class="list-group my-4">
+        <li class="list-group-item"><strong>Nom :</strong> {{ equipe.nom }}</li>
+        <li class="list-group-item"><strong>Pays :</strong> {{ equipe.pays }}</li>
+        <li class="list-group-item"><strong>Capitaine :</strong> {{ equipe.nomCapitaine }}</li>
+        <li class="list-group-item"><strong>Email :</strong> {{ equipe.email }}</li>
+        <li class="list-group-item"><strong>Téléphone :</strong> {{ equipe.telephone }}</li>
+    </ul>
+
+    <a href="{{ path('equipe_edit', {id: equipe.id}) }}" class="btn btn-warning">Modifier</a>
+    <a href="{{ path('app_home') }}" class="btn btn-secondary">Retour</a>
+{% endblock %}

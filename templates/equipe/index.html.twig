@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des équipes{% endblock %}
+
+{% block body %}
+    <h1 class="mb-4">Liste des équipes</h1>
+
+    <a href="{{ path('equipe_new') }}" class="btn btn-primary mb-3">Créer une nouvelle équipe</a>
+
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Nom</th>
+                <th>Pays</th>
+                <th>Capitaine</th>
+                <th>Email</th>
+                <th>Téléphone</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for equipe in equipes %}
+            <tr>
+                <td>{{ equipe.nom }}</td>
+                <td>{{ equipe.pays }}</td>
+                <td>{{ equipe.nomCapitaine }}</td>
+                <td>{{ equipe.email }}</td>
+                <td>{{ equipe.telephone }}</td>
+                <td>
+                    <a href="{{ path('equipe_show', {id: equipe.id}) }}" class="btn btn-sm btn-info text-white">Voir</a>
+                    <a href="{{ path('equipe_edit', {id: equipe.id}) }}" class="btn btn-sm btn-warning">Modifier</a>
+                    <form method="post" action="{{ path('equipe_delete', {id: equipe.id}) }}" class="d-inline" onsubmit="return confirm('Supprimer cette équipe ?');">
+                        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ equipe.id) }}">
+                        <button class="btn btn-sm btn-danger">Supprimer</button>
+                    </form>
+                </td>
+            </tr>
+        {% else %}
+            <tr><td colspan="7">Aucune équipe trouvée</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
