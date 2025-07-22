@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier l'équipe{% endblock %}
+
+{% block body %}
+    <h1 class="mb-4">Modifier l’équipe</h1>
+
+    <div class="card p-4">
+        {{ form_start(form) }}
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    {{ form_label(form.nom) }}
+                    {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.nom) }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form_label(form.pays) }}
+                    {{ form_widget(form.pays, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.pays) }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form_label(form.nom_capitaine) }}
+                    {{ form_widget(form.nom_capitaine, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.nom_capitaine) }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form_label(form.email) }}
+                    {{ form_widget(form.email, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.email) }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form_label(form.telephone) }}
+                    {{ form_widget(form.telephone, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.telephone) }}
+                </div>
+            </div>
+            <button class="btn btn-primary">{{ button_label|default('Mettre à jour') }}</button>
+        {{ form_end(form) }}
+    </div>
+
+    <a href="{{ path('app_home') }}" class="btn btn-link mt-3">← Retour</a>
+{% endblock %}
