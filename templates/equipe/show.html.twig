@@ -3,8 +3,7 @@
 {% block title %}Équipe {{ equipe.nom }}{% endblock %}
 
 {% block body %}
-    <h1>Détails de l'équipe</h1>
-
+    <h1 class="mb-4">Détails de l'équipe</h1>
     <ul class="list-group my-4">
         <li class="list-group-item"><strong>Nom :</strong> {{ equipe.nom }}</li>
         <li class="list-group-item"><strong>Pays :</strong> {{ equipe.pays }}</li>
@@ -13,6 +12,33 @@
         <li class="list-group-item"><strong>Téléphone :</strong> {{ equipe.telephone }}</li>
     </ul>
 
+    <h2 class="mt-4">Joueurs de l'équipe</h2>
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Poste</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for joueur in equipe.joueurs %}
+            <tr>
+                <td>{{ joueur.nom }}</td>
+                <td>{{ joueur.prenom }}</td>
+                <td>{{ joueur.poste }}</td>
+                <td>
+                    <a href="{{ path('joueur_show', {'id': joueur.id}) }}" class="btn btn-sm btn-info text-white">Voir</a>
+                    <a href="{{ path('joueur_edit', {'id': joueur.id}) }}" class="btn btn-sm btn-warning">Modifier</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr><td colspan="4">Aucun joueur dans cette équipe.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
     <a href="{{ path('equipe_edit', {id: equipe.id}) }}" class="btn btn-warning">Modifier</a>
-    <a href="{{ path('app_home') }}" class="btn btn-secondary">Retour</a>
+    <a href="{{ path('equipe_index') }}" class="btn btn-secondary">Retour à la liste</a>
+    <a href="{{ path('app_home') }}" class="btn btn-link">Accueil</a>
 {% endblock %}
