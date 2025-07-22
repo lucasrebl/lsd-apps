@@ -11,10 +11,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/')]
+#[Route('/equipe')]
 class EquipeController extends AbstractController
 {
-    #[Route('', name: 'app_home', methods: ['GET'])]
+    #[Route('/', name: 'equipe_index', methods: ['GET'])]
     public function index(EquipeRepository $equipeRepository): Response
     {
         return $this->render('equipe/index.html.twig', [
@@ -22,7 +22,7 @@ class EquipeController extends AbstractController
         ]);
     }
 
-    #[Route('equipe/new', name: 'equipe_new', methods: ['GET', 'POST'])]
+    #[Route('/new', name: 'equipe_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $em): Response
     {
         $equipe = new Equipe();
@@ -33,7 +33,7 @@ class EquipeController extends AbstractController
             $em->persist($equipe);
             $em->flush();
 
-            return $this->redirectToRoute('app_home');
+            return $this->redirectToRoute('equipe_index');
         }
 
         return $this->render('equipe/new.html.twig', [
@@ -42,7 +42,7 @@ class EquipeController extends AbstractController
         ]);
     }
 
-    #[Route('equipe/{id}', name: 'equipe_show', methods: ['GET'])]
+    #[Route('/{id}', name: 'equipe_show', methods: ['GET'])]
     public function show(Equipe $equipe): Response
     {
         return $this->render('equipe/show.html.twig', [
@@ -50,7 +50,7 @@ class EquipeController extends AbstractController
         ]);
     }
 
-    #[Route('equipe/{id}/edit', name: 'equipe_edit', methods: ['GET', 'POST'])]
+    #[Route('/{id}/edit', name: 'equipe_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Equipe $equipe, EntityManagerInterface $em): Response
     {
         $form = $this->createForm(EquipeType::class, $equipe);
@@ -58,7 +58,7 @@ class EquipeController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $em->flush();
-            return $this->redirectToRoute('app_home');
+            return $this->redirectToRoute('equipe_index');
         }
 
         return $this->render('equipe/edit.html.twig', [
@@ -67,7 +67,7 @@ class EquipeController extends AbstractController
         ]);
     }
 
-    #[Route('equipe/{id}', name: 'equipe_delete', methods: ['POST'])]
+    #[Route('/{id}', name: 'equipe_delete', methods: ['POST'])]
     public function delete(Request $request, Equipe $equipe, EntityManagerInterface $em): Response
     {
         if ($this->isCsrfTokenValid('delete' . $equipe->getId(), $request->request->get('_token'))) {
@@ -75,6 +75,6 @@ class EquipeController extends AbstractController
             $em->flush();
         }
 
-        return $this->redirectToRoute('app_home');
+        return $this->redirectToRoute('equipe_index');
     }
 }

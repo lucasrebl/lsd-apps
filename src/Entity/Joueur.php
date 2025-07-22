@@ -29,6 +29,11 @@ class Joueur
     #[ORM\Column]
     private ?\DateTime $date_creation = null;
 
+    public function __construct()
+    {
+        $this->date_creation = new \DateTime();
+    }
+
     public function getId(): ?int
     {
         return $this->id_joueur;

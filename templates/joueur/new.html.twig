@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau joueur{% endblock %}
+
+{% block body %}
+    <h1 class="mb-4">Créer un nouveau joueur</h1>
+    <div class="card p-4">
+        {{ form_start(form) }}
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    {{ form_label(form.nom) }}
+                    {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.nom) }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    {{ form_label(form.prenom) }}
+                    {{ form_widget(form.prenom, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.prenom) }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    {{ form_label(form.poste) }}
+                    {{ form_widget(form.poste, {'attr': {'class': 'form-control'}}) }}
+                    {{ form_errors(form.poste) }}
+                </div>
+                <div class="col-md-6 mb-3">
+                    {{ form_label(form.id_equipe) }}
+                    {{ form_widget(form.id_equipe, {'attr': {'class': 'form-select'}}) }}
+                    {{ form_errors(form.id_equipe) }}
+                </div>
+            </div>
+            <button class="btn btn-success">Créer</button>
+        {{ form_end(form) }}
+    </div>
+    <a href="{{ path('joueur_index') }}" class="btn btn-link mt-3">← Retour à la liste</a>
+{% endblock %} 
