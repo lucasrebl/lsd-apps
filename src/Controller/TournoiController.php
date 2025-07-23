@@ -75,4 +75,120 @@ class TournoiController extends AbstractController
             'equipesNonInscrites' => $equipesNonInscrites,
         ]);
     }
+
+    #[Route('/{id}/generer-poules', name: 'tournoi_generer_poules', methods: ['POST'])]
+    public function genererPoules(Request $request, Tournoi $tournoi, EntityManagerInterface $em): Response
+    {
+        $nbParPoule = (int) $request->request->get('nb_equipes_par_poule');
+        $equipes = $tournoi->getEquipesInscrites()->toArray();
+        shuffle($equipes);
+        $nbEquipes = count($equipes);
+        if ($nbParPoule < 2 || $nbParPoule > $nbEquipes) {
+            $this->addFlash('danger', 'Nombre d\'équipes par poule invalide.');
+            return $this->redirectToRoute('tournoi_show', ['id' => $tournoi->getId()]);
+        }
+        $nbPoules = (int) ceil($nbEquipes / $nbParPoule);
+        $pouleIndex = 1;
+        for ($i = 0; $i < $nbPoules; $i++) {
+            $poule = new \App\Entity\Poule();
+            $poule->setNom('Poule ' . chr(65 + $i));
+            $poule->setIdTournoi($tournoi);
+            $poule->setDateCreation(new \DateTime());
+            $em->persist($poule);
+            // Répartir les équipes dans la poule
+            for ($j = 0; $j < $nbParPoule && ($i * $nbParPoule + $j) < $nbEquipes; $j++) {
+                $equipe = $equipes[$i * $nbParPoule + $j];
+                $pouleEquipe = new \App\Entity\PouleEquipe();
+                $pouleEquipe->setIdPoule($poule);
+                $pouleEquipe->setIdEquipe($equipe);
+                $pouleEquipe->setDateCreation(new \DateTime());
+                $em->persist($pouleEquipe);
+            }
+        }
+        $em->flush();
+        $this->addFlash('success', 'Poules générées aléatoirement !');
+        return $this->redirectToRoute('tournoi_show', ['id' => $tournoi->getId()]);
+    }
+
+    #[Route('/{id}/generer-matchs', name: 'tournoi_generer_matchs', methods: ['POST'])]
+    public function genererMatchs(Request $request, Tournoi $tournoi, EntityManagerInterface $em): Response
+    {
+        foreach ($tournoi->getPoules() as $poule) {
+            $equipes = [];
+            foreach ($poule->getPouleEquipes() as $pe) {
+                $equipes[] = $pe->getIdEquipe();
+            }
+            $nbEquipes = count($equipes);
+            for ($i = 0; $i < $nbEquipes - 1; $i++) {
+                for ($j = $i + 1; $j < $nbEquipes; $j++) {
+                    $match = new \App\Entity\Matchs();
+                    $match->setIdPoule($poule);
+                    $match->setIdTournoi($tournoi);
+                    $match->setDateHeure(new \DateTime());
+                    $match->setLieu($tournoi->getLieu());
+                    $match->setPhase('poule');
+                    $match->setDateCreation(new \DateTime());
+                    $em->persist($match);
+                    // Lier les deux équipes au match
+                    foreach ([['equipe' => $equipes[$i], 'role' => 'A'], ['equipe' => $equipes[$j], 'role' => 'B']] as $data) {
+                        $me = new \App\Entity\MatchEquipe();
+                        $me->setIdMatch($match);
+                        $me->setIdEquipe($data['equipe']);
+                        $me->setRole($data['role']);
+                        $me->setDateCreation(new \DateTime());
+                        $em->persist($me);
+                    }
+                }
+            }
+        }
+        $em->flush();
+        $this->addFlash('success', 'Tous les matchs de poule ont été générés !');
+        return $this->redirectToRoute('tournoi_show', ['id' => $tournoi->getId()]);
+    }
+
+    #[Route('/match/{id}/saisir-resultat', name: 'match_saisir_resultat', methods: ['GET', 'POST'])]
+    public function saisirResultat(Request $request, \App\Entity\Matchs $match, EntityManagerInterface $em): Response
+    {
+        $resultat = $match->getResultat();
+        if (!$resultat) {
+            $resultat = new \App\Entity\Resultat();
+            $resultat->setMatch($match);
+        }
+        if ($request->isMethod('POST')) {
+            $scoreA = (int) $request->request->get('score_equipeA');
+            $scoreB = (int) $request->request->get('score_equipeB');
+            $fautesA = (int) $request->request->get('fautes_equipeA');
+            $fautesB = (int) $request->request->get('fautes_equipeB');
+            $jaunesA = (int) $request->request->get('cartons_jaunes_equipeA');
+            $jaunesB = (int) $request->request->get('cartons_jaunes_equipeB');
+            $rougesA = (int) $request->request->get('cartons_rouges_equipeA');
+            $rougesB = (int) $request->request->get('cartons_rouges_equipeB');
+            $resultat->setScoreEquipe1($scoreA);
+            $resultat->setScoreEquipe2($scoreB);
+            $resultat->setFautesEquipe1($fautesA);
+            $resultat->setFautesEquipe2($fautesB);
+            $resultat->setCartonsJaunesEquipe1($jaunesA);
+            $resultat->setCartonsJaunesEquipe2($jaunesB);
+            $resultat->setCartonsRougesEquipe1($rougesA);
+            $resultat->setCartonsRougesEquipe2($rougesB);
+            $resultat->setDateCreation(new \DateTime());
+            $em->persist($resultat);
+            $em->flush();
+            $this->addFlash('success', 'Résultat enregistré !');
+            return $this->redirectToRoute('tournoi_show', ['id' => $match->getIdTournoi()->getId()]);
+        }
+        // Récupérer les noms des équipes A et B
+        $equipeA = null;
+        $equipeB = null;
+        foreach ($match->getMatchEquipes() as $me) {
+            if ($me->getRole() === 'A') $equipeA = $me->getIdEquipe();
+            if ($me->getRole() === 'B') $equipeB = $me->getIdEquipe();
+        }
+        return $this->render('tournoi/saisir_resultat.html.twig', [
+            'match' => $match,
+            'equipeA' => $equipeA,
+            'equipeB' => $equipeB,
+            'resultat' => $resultat,
+        ]);
+    }
 } 
