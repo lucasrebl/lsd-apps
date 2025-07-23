@@ -99,4 +99,94 @@
             </ul>
         </div>
     {% endfor %}
+
+    <hr class="my-4">
+    <h2 class="mb-3">Classement des poules</h2>
+    {% for poule in tournoi.poules %}
+        <div class="mb-4">
+            <h4 class="bg-info text-white p-2 rounded">{{ poule.nom }}</h4>
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Équipe</th>
+                        <th>Points</th>
+                        <th>Victoires</th>
+                        <th>Buts marqués</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for row in classementsPoules[poule.id]|default([]) %}
+                    <tr>
+                        <td>{{ row.equipe.nom }}</td>
+                        <td>{{ row.points }}</td>
+                        <td>{{ row.victoires }}</td>
+                        <td>{{ row.buts }}</td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="4">Aucune équipe dans cette poule.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% endfor %}
+    <form method="post" action="{{ path('tournoi_generer_tableau', {id: tournoi.id}) }}" class="mb-4">
+        <div class="mb-3">
+            <label for="nb_qualifies" class="form-label">Nombre d'équipes qualifiées par poule pour la phase finale :</label>
+            <input type="number" min="1" max="{{ tournoi.poules|first.pouleEquipes|length }}" name="nb_qualifies" id="nb_qualifies" class="form-control" value="1" required>
+        </div>
+        <button type="submit" class="btn btn-dark">Générer le tableau à élimination directe</button>
+    </form>
+
+    <hr class="my-4">
+    <h2 class="mb-3">Tableau à élimination directe</h2>
+    {% for tableau in tournoi.tableaus %}
+        {% set tours = tableauTours[tableau.id]|default({}) %}
+        {% for tour, matchs in tours %}
+            <div class="mb-4">
+                <h4 class="bg-secondary text-white p-2 rounded">{{ tour }}</h4>
+                <ul class="list-group list-group-flush">
+                    {% set tous_resultats = true %}
+                    {% set vainqueurs = [] %}
+                    {% for match in matchs %}
+                        <li class="list-group-item">
+                            {% set equipes = [] %}
+                            {% for me in match.matchEquipes %}
+                                {% set equipes = equipes|merge([{ 'nom': me.idEquipe.nom, 'role': me.role }]) %}
+                            {% endfor %}
+                            {% set equipeA = (equipes|filter(e => e.role == 'A')|first) %}
+                            {% set equipeB = (equipes|filter(e => e.role == 'B')|first) %}
+                            <strong>{% if equipeA %}{{ equipeA.nom }}{% else %}?{% endif %}</strong> vs <strong>{% if equipeB %}{{ equipeB.nom }}{% else %}?{% endif %}</strong>
+                            {% if match.resultat %}
+                                <span class="badge bg-success ms-2">{{ match.resultat.scoreEquipe1 }} - {{ match.resultat.scoreEquipe2 }}</span>
+                                <div class="mt-2 small">
+                                    <strong>Fautes :</strong> {{ match.resultat.fautesEquipe1 }} / {{ match.resultat.fautesEquipe2 }}<br>
+                                    <strong>Cartons jaunes :</strong> {{ match.resultat.cartonsJaunesEquipe1 }} / {{ match.resultat.cartonsJaunesEquipe2 }}<br>
+                                    <strong>Cartons rouges :</strong> {{ match.resultat.cartonsRougesEquipe1 }} / {{ match.resultat.cartonsRougesEquipe2 }}
+                                </div>
+                                {% set scoreA = match.resultat.scoreEquipe1 %}
+                                {% set scoreB = match.resultat.scoreEquipe2 %}
+                                {% if scoreA > scoreB %}
+                                    {% set vainqueurs = vainqueurs|merge([equipeA]) %}
+                                {% elseif scoreB > scoreA %}
+                                    {% set vainqueurs = vainqueurs|merge([equipeB]) %}
+                                {% endif %}
+                            {% else %}
+                                <a href="{{ path('match_saisir_resultat', {id: match.id}) }}" class="btn btn-sm btn-outline-primary float-end">Saisir résultat</a>
+                                {% set tous_resultats = false %}
+                            {% endif %}
+                        </li>
+                    {% else %}
+                        <li class="list-group-item">Aucun match généré pour ce tour.</li>
+                    {% endfor %}
+                </ul>
+                {% if tous_resultats and vainqueurs|length > 1 %}
+                    <form method="post" action="{{ path('tableau_generer_tour_suivant', {id: tableau.id}) }}" class="mt-2">
+                        <button type="submit" class="btn btn-warning">Générer le tour suivant</button>
+                    </form>
+                {% elseif tous_resultats and vainqueurs|length == 1 %}
+                    <div class="alert alert-success mt-2">🏆 <strong>Vainqueur du tournoi : {{ vainqueurs[0].nom }}</strong></div>
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% endfor %}
 {% endblock %} 

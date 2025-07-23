@@ -3,10 +3,29 @@
 {% block title %}Créer un tournoi{% endblock %}
 
 {% block body %}
-    <h1>Créer un nouveau tournoi</h1>
-    {{ form_start(form) }}
-        {{ form_widget(form) }}
-        <button class="btn btn-primary">Créer</button>
-        <a href="{{ path('app_home') }}" class="btn btn-secondary">Annuler</a>
-    {{ form_end(form) }}
+    <h1 class="mb-4">Créer un nouveau tournoi</h1>
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            {{ form_start(form) }}
+                <div class="mb-3">
+                    {{ form_label(form.nom, 'Nom du tournoi', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.nom, {'attr': {'class': 'form-control', 'placeholder': 'Nom du tournoi'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(form.lieu, 'Lieu', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.lieu, {'attr': {'class': 'form-control', 'placeholder': 'Lieu'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(form.date_debut, 'Date de début', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.date_debut, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <div class="mb-3">
+                    {{ form_label(form.date_fin, 'Date de fin', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(form.date_fin, {'attr': {'class': 'form-control'}}) }}
+                </div>
+                <button class="btn btn-primary">Créer</button>
+                <a href="{{ path('app_home') }}" class="btn btn-secondary">Annuler</a>
+            {{ form_end(form) }}
+        </div>
+    </div>
 {% endblock %} 

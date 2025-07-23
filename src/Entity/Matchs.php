@@ -25,7 +25,7 @@ class Matchs
     private ?string $phase = null;
 
     #[ORM\ManyToOne(inversedBy: 'matchs')]
-    #[ORM\JoinColumn(nullable: false, referencedColumnName: 'id_poule')]
+    #[ORM\JoinColumn(nullable: true, referencedColumnName: 'id_poule')]
     private ?Poule $id_poule = null;
 
     #[ORM\ManyToOne(inversedBy: 'matchs')]
