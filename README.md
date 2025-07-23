@@ -34,17 +34,10 @@ docker-compose exec php composer install
 5. Create database schema:
 
 ```bash
-docker-compose exec php php bin/console make:migration
-docker-compose exec php php bin/console doctrine:migrations:migrate
+docker-compose exec php php bin/console doctrine:migrations:migrate --no-interaction
 ```
 
-6. Load fixtures (sample data):
-
-```bash
-docker-compose exec php php bin/console doctrine:fixtures:load
-```
-
-7. Access the application at http://localhost:8080
+6. Access the application at http://localhost:8080
 
 ## Technical Stack
 
