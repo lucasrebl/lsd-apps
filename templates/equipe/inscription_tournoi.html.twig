@@ -1,0 +1,22 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription à un tournoi{% endblock %}
+
+{% block body %}
+    <h1>Inscrire l'équipe {{ equipe.nom }} à un tournoi</h1>
+    <form method="post">
+        <div class="mb-3">
+            <label for="tournoi_id" class="form-label">Choisir un tournoi :</label>
+            <select name="tournoi_id" id="tournoi_id" class="form-select" required>
+                <option value="">-- Sélectionner --</option>
+                {% for tournoi in tournois %}
+                    <option value="{{ tournoi.id }}">{{ tournoi.nom }} ({{ tournoi.lieu }}, {{ tournoi.dateDebut|date('d/m/Y') }})</option>
+                {% else %}
+                    <option disabled>Aucun tournoi disponible</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">S'inscrire</button>
+        <a href="{{ path('equipe_show', {id: equipe.id}) }}" class="btn btn-secondary">Annuler</a>
+    </form>
+{% endblock %} 

@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle équipe{% endblock %}
+
+{% block body %}
+    <h1 class="mb-4">Ajouter une nouvelle équipe</h1>
+    <div class="card p-4">
+        {% include 'equipe/_form.html.twig' with {'form': form, 'button_label': 'Créer'} %}
+    </div>
+    <a href="{{ path('app_home') }}" class="btn btn-link mt-3">← Retour</a>
+{% endblock %}

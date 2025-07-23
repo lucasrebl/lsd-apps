@@ -1,0 +1,71 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block body %}
+    <h1 class="mb-4">Accueil</h1>
+    <a href="{{ path('tournoi_new') }}" class="btn btn-success mb-3">Créer un tournoi</a>
+    <a href="{{ path('tournoi_index') }}" class="btn btn-primary mb-3">Voir tous les tournois</a>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h2>Équipes</h2>
+                <a href="{{ path('equipe_new') }}" class="btn btn-primary btn-sm">Nouvelle équipe</a>
+            </div>
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Nom</th>
+                        <th>Pays</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for equipe in equipes %}
+                    <tr>
+                        <td>{{ equipe.nom }}</td>
+                        <td>{{ equipe.pays }}</td>
+                        <td>
+                            <a href="{{ path('equipe_show', {id: equipe.id}) }}" class="btn btn-sm btn-info text-white">Voir</a>
+                            <a href="{{ path('equipe_edit', {id: equipe.id}) }}" class="btn btn-sm btn-warning">Modifier</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="3">Aucune équipe trouvée.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <a href="{{ path('equipe_index') }}" class="btn btn-outline-secondary btn-sm">Voir toutes les équipes</a>
+        </div>
+        <div class="col-md-6">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h2>Joueurs</h2>
+                <a href="{{ path('joueur_new') }}" class="btn btn-primary btn-sm">Nouveau joueur</a>
+            </div>
+            <table class="table table-bordered table-striped">
+                <thead class="table-dark">
+                    <tr>
+                        <th>Nom</th>
+                        <th>Prénom</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for joueur in joueurs %}
+                    <tr>
+                        <td>{{ joueur.nom }}</td>
+                        <td>{{ joueur.prenom }}</td>
+                        <td>
+                            <a href="{{ path('joueur_show', {id: joueur.id}) }}" class="btn btn-sm btn-info text-white">Voir</a>
+                            <a href="{{ path('joueur_edit', {id: joueur.id}) }}" class="btn btn-sm btn-warning">Modifier</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="3">Aucun joueur trouvé.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <a href="{{ path('joueur_index') }}" class="btn btn-outline-secondary btn-sm">Voir tous les joueurs</a>
+        </div>
+    </div>
+{% endblock %} 

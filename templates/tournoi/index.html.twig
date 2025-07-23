@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des tournois{% endblock %}
+
+{% block body %}
+    <h1>Liste des tournois</h1>
+    <a href="{{ path('tournoi_new') }}" class="btn btn-success mb-3">Créer un tournoi</a>
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Nom</th>
+                <th>Lieu</th>
+                <th>Date début</th>
+                <th>Date fin</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for tournoi in tournois %}
+            <tr>
+                <td>{{ tournoi.nom }}</td>
+                <td>{{ tournoi.lieu }}</td>
+                <td>{{ tournoi.dateDebut|date('d/m/Y') }}</td>
+                <td>{{ tournoi.dateFin|date('d/m/Y') }}</td>
+                <td>
+                    <a href="{{ path('tournoi_show', {id: tournoi.id}) }}" class="btn btn-info btn-sm">Voir</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr><td colspan="4">Aucun tournoi trouvé.</td></tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ path('app_home') }}" class="btn btn-secondary">Accueil</a>
+{% endblock %} 

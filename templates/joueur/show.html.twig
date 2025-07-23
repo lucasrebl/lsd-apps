@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Joueur {{ joueur.nom }} {{ joueur.prenom }}{% endblock %}
+
+{% block body %}
+    <h1 class="mb-4">Détail du joueur</h1>
+    <ul class="list-group my-4">
+        <li class="list-group-item"><strong>Id :</strong> {{ joueur.id }}</li>
+        <li class="list-group-item"><strong>Nom :</strong> {{ joueur.nom }}</li>
+        <li class="list-group-item"><strong>Prénom :</strong> {{ joueur.prenom }}</li>
+        <li class="list-group-item"><strong>Poste :</strong> {{ joueur.poste }}</li>
+        <li class="list-group-item"><strong>Équipe :</strong> {{ joueur.idEquipe ? joueur.idEquipe.nom : '' }}</li>
+    </ul>
+    <a href="{{ path('joueur_edit', {'id': joueur.id}) }}" class="btn btn-warning">Modifier</a>
+    <a href="{{ path('joueur_index') }}" class="btn btn-secondary">Retour à la liste</a>
+    <a href="{{ path('app_home') }}" class="btn btn-link">Accueil</a>
+{% endblock %} 

@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Saisir résultat{% endblock %}
+
+{% block body %}
+    <h1>Saisir le résultat du match</h1>
+    <p><strong>{{ equipeA.nom }}</strong> vs <strong>{{ equipeB.nom }}</strong></p>
+    <form method="post">
+        <div class="mb-3">
+            <label for="score_equipeA" class="form-label">Score {{ equipeA.nom }}</label>
+            <input type="number" name="score_equipeA" id="score_equipeA" class="form-control" required value="{{ resultat.scoreEquipe1 is defined ? resultat.scoreEquipe1 : '' }}">
+        </div>
+        <div class="mb-3">
+            <label for="score_equipeB" class="form-label">Score {{ equipeB.nom }}</label>
+            <input type="number" name="score_equipeB" id="score_equipeB" class="form-control" required value="{{ resultat.scoreEquipe2 is defined ? resultat.scoreEquipe2 : '' }}">
+        </div>
+        <div class="mb-3">
+            <label for="fautes_equipeA" class="form-label">Fautes {{ equipeA.nom }}</label>
+            <input type="number" name="fautes_equipeA" id="fautes_equipeA" class="form-control" required value="{{ resultat.fautesEquipe1 is defined ? resultat.fautesEquipe1 : '' }}">
+        </div>
+        <div class="mb-3">
+            <label for="cartons_jaunes_equipeA" class="form-label">Cartons jaunes {{ equipeA.nom }}</label>
+            <input type="number" name="cartons_jaunes_equipeA" id="cartons_jaunes_equipeA" class="form-control" required value="{{ resultat.cartonsJaunesEquipe1 is defined ? resultat.cartonsJaunesEquipe1 : '' }}">
+        </div>
+        <div class="mb-3">
+            <label for="cartons_rouges_equipeA" class="form-label">Cartons rouges {{ equipeA.nom }}</label>
+            <input type="number" name="cartons_rouges_equipeA" id="cartons_rouges_equipeA" class="form-control" required value="{{ resultat.cartonsRougesEquipe1 is defined ? resultat.cartonsRougesEquipe1 : '' }}">
+        </div>
+        <div class="mb-3">
+            <label for="fautes_equipeB" class="form-label">Fautes {{ equipeB.nom }}</label>
+            <input type="number" name="fautes_equipeB" id="fautes_equipeB" class="form-control" required value="{{ resultat.fautesEquipe2 is defined ? resultat.fautesEquipe2 : '' }}">
+        </div>
+        <div class="mb-3">
+            <label for="cartons_jaunes_equipeB" class="form-label">Cartons jaunes {{ equipeB.nom }}</label>
+            <input type="number" name="cartons_jaunes_equipeB" id="cartons_jaunes_equipeB" class="form-control" required value="{{ resultat.cartonsJaunesEquipe2 is defined ? resultat.cartonsJaunesEquipe2 : '' }}">
+        </div>
+        <div class="mb-3">
+            <label for="cartons_rouges_equipeB" class="form-label">Cartons rouges {{ equipeB.nom }}</label>
+            <input type="number" name="cartons_rouges_equipeB" id="cartons_rouges_equipeB" class="form-control" required value="{{ resultat.cartonsRougesEquipe2 is defined ? resultat.cartonsRougesEquipe2 : '' }}">
+        </div>
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+        <a href="{{ path('tournoi_show', {id: match.idTournoi.id}) }}" class="btn btn-secondary">Annuler</a>
+    </form>
+{% endblock %} 
