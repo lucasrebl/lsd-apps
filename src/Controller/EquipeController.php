@@ -77,4 +77,34 @@ class EquipeController extends AbstractController
 
         return $this->redirectToRoute('equipe_index');
     }
+
+    #[Route('/{id}/inscription-tournoi', name: 'equipe_inscription_tournoi', methods: ['GET', 'POST'])]
+    public function inscriptionTournoi(Request $request, Equipe $equipe, EntityManagerInterface $em, \App\Repository\TournoiRepository $tournoiRepository): Response
+    {
+        // Récupérer les tournois auxquels l'équipe n'est pas déjà inscrite
+        $tournoisDisponibles = $tournoiRepository->createQueryBuilder('t')
+            ->where(':equipe NOT MEMBER OF t.equipesInscrites')
+            ->setParameter('equipe', $equipe)
+            ->getQuery()
+            ->getResult();
+
+        if ($request->isMethod('POST')) {
+            $tournoiId = $request->request->get('tournoi_id');
+            if ($tournoiId) {
+                $tournoi = $tournoiRepository->find($tournoiId);
+                if ($tournoi) {
+                    $equipe->addTournoiInscrit($tournoi);
+                    $em->persist($equipe);
+                    $em->flush();
+                    $this->addFlash('success', 'Inscription au tournoi réussie !');
+                }
+            }
+            return $this->redirectToRoute('equipe_show', ['id' => $equipe->getId()]);
+        }
+
+        return $this->render('equipe/inscription_tournoi.html.twig', [
+            'equipe' => $equipe,
+            'tournois' => $tournoisDisponibles,
+        ]);
+    }
 }

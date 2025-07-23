@@ -55,12 +55,20 @@ class Tournoi
     #[ORM\OneToMany(targetEntity: StatistiqueEquipeTournoi::class, mappedBy: 'id_tournoi')]
     private Collection $statistiqueEquipeTournois;
 
+    /**
+     * @var Collection<int, Equipe>
+     */
+    #[ORM\ManyToMany(targetEntity: Equipe::class, mappedBy: 'tournoisInscrits')]
+    private Collection $equipesInscrites;
+
     public function __construct()
     {
         $this->poules = new ArrayCollection();
         $this->tableaus = new ArrayCollection();
         $this->matchs = new ArrayCollection();
         $this->statistiqueEquipeTournois = new ArrayCollection();
+        $this->equipesInscrites = new ArrayCollection();
+        $this->date_creation = new \DateTime();
     }
 
     public function getId(): ?int
@@ -246,5 +254,13 @@ class Tournoi
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Equipe>
+     */
+    public function getEquipesInscrites(): Collection
+    {
+        return $this->equipesInscrites;
     }
 }
