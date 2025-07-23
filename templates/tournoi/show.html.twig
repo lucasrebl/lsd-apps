@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tournoi {{ tournoi.nom }}{% endblock %}
+
+{% block body %}
+    <h1>Détail du tournoi : {{ tournoi.nom }}</h1>
+    <ul class="list-group my-4">
+        <li class="list-group-item"><strong>Lieu :</strong> {{ tournoi.lieu }}</li>
+        <li class="list-group-item"><strong>Date début :</strong> {{ tournoi.dateDebut|date('d/m/Y') }}</li>
+        <li class="list-group-item"><strong>Date fin :</strong> {{ tournoi.dateFin|date('d/m/Y') }}</li>
+    </ul>
+
+    <h2>Équipes inscrites</h2>
+    <ul class="list-group mb-4">
+        {% for equipe in equipesInscrites %}
+            <li class="list-group-item">{{ equipe.nom }} ({{ equipe.pays }})</li>
+        {% else %}
+            <li class="list-group-item">Aucune équipe inscrite.</li>
+        {% endfor %}
+    </ul>
+
+    <h2>Inscrire une équipe</h2>
+    <form method="post" class="mb-4">
+        <div class="mb-3">
+            <label for="equipe_id" class="form-label">Choisir une équipe :</label>
+            <select name="equipe_id" id="equipe_id" class="form-select" required>
+                <option value="">-- Sélectionner --</option>
+                {% for equipe in equipesNonInscrites %}
+                    <option value="{{ equipe.id }}">{{ equipe.nom }} ({{ equipe.pays }})</option>
+                {% else %}
+                    <option disabled>Aucune équipe disponible</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary">Inscrire</button>
+        <a href="{{ path('tournoi_index') }}" class="btn btn-secondary">Retour</a>
+    </form>
+{% endblock %} 

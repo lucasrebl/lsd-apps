@@ -38,6 +38,7 @@
         {% endfor %}
         </tbody>
     </table>
+    <a href="{{ path('equipe_inscription_tournoi', {id: equipe.id}) }}" class="btn btn-success mb-3">S'inscrire à un tournoi</a>
     <a href="{{ path('equipe_edit', {id: equipe.id}) }}" class="btn btn-warning">Modifier</a>
     <a href="{{ path('equipe_index') }}" class="btn btn-secondary">Retour à la liste</a>
     <a href="{{ path('app_home') }}" class="btn btn-link">Accueil</a>

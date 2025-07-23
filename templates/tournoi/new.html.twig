@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer un tournoi{% endblock %}
+
+{% block body %}
+    <h1>Créer un nouveau tournoi</h1>
+    {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <button class="btn btn-primary">Créer</button>
+        <a href="{{ path('app_home') }}" class="btn btn-secondary">Annuler</a>
+    {{ form_end(form) }}
+{% endblock %} 

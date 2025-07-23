@@ -64,12 +64,23 @@ class Equipe
     #[ORM\OneToMany(targetEntity: StatistiqueEquipeTournoi::class, mappedBy: 'id_equipe')]
     private Collection $statistiqueEquipeTournois;
 
+    /**
+     * @var Collection<int, Tournoi>
+     */
+    #[ORM\ManyToMany(targetEntity: Tournoi::class, inversedBy: 'equipesInscrites')]
+    #[ORM\JoinTable(name: 'equipe_tournoi',
+        joinColumns: [new ORM\JoinColumn(name: 'equipe_id', referencedColumnName: 'id_equipe')],
+        inverseJoinColumns: [new ORM\JoinColumn(name: 'tournoi_id', referencedColumnName: 'id_tournoi')]
+    )]
+    private Collection $tournoisInscrits;
+
     public function __construct()
     {
         $this->joueurs = new ArrayCollection();
         $this->pouleEquipes = new ArrayCollection();
         $this->matchEquipes = new ArrayCollection();
         $this->statistiqueEquipeTournois = new ArrayCollection();
+        $this->tournoisInscrits = new ArrayCollection();
         $this->date_creation = new \DateTime(); // ← Initialisation automatique
     }
 
@@ -251,6 +262,28 @@ class Equipe
             }
         }
 
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Tournoi>
+     */
+    public function getTournoisInscrits(): Collection
+    {
+        return $this->tournoisInscrits;
+    }
+
+    public function addTournoiInscrit(Tournoi $tournoi): static
+    {
+        if (!$this->tournoisInscrits->contains($tournoi)) {
+            $this->tournoisInscrits->add($tournoi);
+        }
+        return $this;
+    }
+
+    public function removeTournoiInscrit(Tournoi $tournoi): static
+    {
+        $this->tournoisInscrits->removeElement($tournoi);
         return $this;
     }
 }
