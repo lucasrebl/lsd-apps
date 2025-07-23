@@ -437,7 +437,7 @@ class TournoiController extends AbstractController
                 }
             }
         }
-        // Classement général (sans points, mais avec fautes et cartons)
+        // Classement général
         $classement = [];
         foreach ($tournoi->getEquipesInscrites() as $equipe) {
             $buts = 0;
@@ -489,22 +489,10 @@ class TournoiController extends AbstractController
             }
             return $b['victoires'] <=> $a['victoires'];
         });
-        // Meilleurs buteurs (structure vide)
-        $buteurs = [];
-        foreach ($tournoi->getEquipesInscrites() as $equipe) {
-            foreach ($equipe->getJoueurs() as $joueur) {
-                $buts = 0;
-                $buteurs[] = [
-                    'joueur' => $joueur,
-                    'buts' => $buts,
-                ];
-            }
-        }
         return $this->render('tournoi/stats.html.twig', [
             'tournoi' => $tournoi,
             'vainqueur' => $vainqueur,
             'classement' => $classement,
-            'buteurs' => $buteurs,
         ]);
     }
 } 
