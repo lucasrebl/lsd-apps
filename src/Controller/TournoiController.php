@@ -413,4 +413,98 @@ class TournoiController extends AbstractController
             'resultat' => $resultat,
         ]);
     }
+
+    #[Route('/{id}/stats', name: 'tournoi_stats', methods: ['GET'])]
+    public function stats(Tournoi $tournoi): Response
+    {
+        // Vainqueur
+        $vainqueur = null;
+        foreach ($tournoi->getTableaus() as $tableau) {
+            foreach ($tableau->getMatchs() as $match) {
+                $phase = $match->getPhase();
+                if ($phase && stripos($phase, 'finale') !== false && $match->getResultat()) {
+                    $res = $match->getResultat();
+                    $scoreA = $res->getScoreEquipe1();
+                    $scoreB = $res->getScoreEquipe2();
+                    $equipeA = null;
+                    $equipeB = null;
+                    foreach ($match->getMatchEquipes() as $me) {
+                        if ($me->getRole() === 'A') $equipeA = $me->getIdEquipe();
+                        if ($me->getRole() === 'B') $equipeB = $me->getIdEquipe();
+                    }
+                    if ($scoreA > $scoreB) $vainqueur = $equipeA;
+                    elseif ($scoreB > $scoreA) $vainqueur = $equipeB;
+                }
+            }
+        }
+        // Classement général (sans points, mais avec fautes et cartons)
+        $classement = [];
+        foreach ($tournoi->getEquipesInscrites() as $equipe) {
+            $buts = 0;
+            $victoires = 0;
+            $matchsJoues = 0;
+            $fautes = 0;
+            $jaunes = 0;
+            $rouges = 0;
+            foreach ($equipe->getMatchEquipes() as $me) {
+                $match = $me->getIdMatch();
+                $res = $match->getResultat();
+                if ($res) {
+                    $matchsJoues++;
+                    if ($me->getRole() === 'A') {
+                        $score = $res->getScoreEquipe1();
+                        $scoreAdv = $res->getScoreEquipe2();
+                        $fautes += $res->getFautesEquipe1();
+                        $jaunes += $res->getCartonsJaunesEquipe1();
+                        $rouges += $res->getCartonsRougesEquipe1();
+                    } else {
+                        $score = $res->getScoreEquipe2();
+                        $scoreAdv = $res->getScoreEquipe1();
+                        $fautes += $res->getFautesEquipe2();
+                        $jaunes += $res->getCartonsJaunesEquipe2();
+                        $rouges += $res->getCartonsRougesEquipe2();
+                    }
+                    if ($score > $scoreAdv) {
+                        $victoires++;
+                    }
+                    $buts += $score;
+                }
+            }
+            $classement[] = [
+                'equipe' => $equipe,
+                'victoires' => $victoires,
+                'buts' => $buts,
+                'matchs' => $matchsJoues,
+                'fautes' => $fautes,
+                'jaunes' => $jaunes,
+                'rouges' => $rouges,
+            ];
+        }
+        usort($classement, function($a, $b) {
+            if ($a['victoires'] === $b['victoires']) {
+                if ($a['buts'] === $b['buts']) {
+                    return $a['fautes'] <=> $b['fautes'];
+                }
+                return $b['buts'] <=> $a['buts'];
+            }
+            return $b['victoires'] <=> $a['victoires'];
+        });
+        // Meilleurs buteurs (structure vide)
+        $buteurs = [];
+        foreach ($tournoi->getEquipesInscrites() as $equipe) {
+            foreach ($equipe->getJoueurs() as $joueur) {
+                $buts = 0;
+                $buteurs[] = [
+                    'joueur' => $joueur,
+                    'buts' => $buts,
+                ];
+            }
+        }
+        return $this->render('tournoi/stats.html.twig', [
+            'tournoi' => $tournoi,
+            'vainqueur' => $vainqueur,
+            'classement' => $classement,
+            'buteurs' => $buteurs,
+        ]);
+    }
 } 

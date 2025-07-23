@@ -1,0 +1,183 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Statistiques du tournoi {{ tournoi.nom }}{% endblock %}
+
+{% block body %}
+    <h1 class="mb-4">Statistiques du tournoi : {{ tournoi.nom }}</h1>
+
+    {% if vainqueur %}
+        <div class="alert alert-success"><strong>🏆 Vainqueur : {{ vainqueur.nom }}</strong></div>
+    {% endif %}
+
+    <h2>Classement général</h2>
+    <table class="table table-bordered table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Équipe</th>
+                <th>Victoires</th>
+                <th>Buts marqués</th>
+                <th>Fautes</th>
+                <th>Cartons jaunes</th>
+                <th>Cartons rouges</th>
+                <th>Matchs joués</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for row in classement %}
+            <tr>
+                <td>{{ row.equipe.nom }}</td>
+                <td>{{ row.victoires }}</td>
+                <td>{{ row.buts }}</td>
+                <td>{{ row.fautes }}</td>
+                <td>{{ row.jaunes }}</td>
+                <td>{{ row.rouges }}</td>
+                <td>{{ row.matchs }}</td>
+            </tr>
+        {% else %}
+            <tr><td colspan="7">Aucune équipe.</td></tr>
+        {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr class="table-info fw-bold">
+                <td>Total tournoi</td>
+                <td>{{ classement|map(r => r.victoires)|reduce((a, b) => a + b, 0) }}</td>
+                <td>{{ classement|map(r => r.buts)|reduce((a, b) => a + b, 0) }}</td>
+                <td>{{ classement|map(r => r.fautes)|reduce((a, b) => a + b, 0) }}</td>
+                <td>{{ classement|map(r => r.jaunes)|reduce((a, b) => a + b, 0) }}</td>
+                <td>{{ classement|map(r => r.rouges)|reduce((a, b) => a + b, 0) }}</td>
+                <td>{{ classement|map(r => r.matchs)|reduce((a, b) => a + b, 0) }}</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <h2>Visualisation</h2>
+    <div class="row">
+        <div class="col-md-4 mb-4">
+            <h5 class="text-center">Répartition des victoires</h5>
+            <canvas id="victoiresChart"></canvas>
+        </div>
+        <div class="col-md-4 mb-4">
+            <h5 class="text-center">Répartition des buts marqués</h5>
+            <canvas id="butsChart"></canvas>
+        </div>
+        <div class="col-md-4 mb-4">
+            <h5 class="text-center">Répartition des fautes</h5>
+            <canvas id="fautesChart"></canvas>
+        </div>
+        <div class="col-md-6 mb-4">
+            <h5 class="text-center">Cartons jaunes par équipe</h5>
+            <canvas id="jaunesChart"></canvas>
+        </div>
+        <div class="col-md-6 mb-4">
+            <h5 class="text-center">Cartons rouges par équipe</h5>
+            <canvas id="rougesChart"></canvas>
+        </div>
+        <div class="col-md-12 mb-4">
+            <h5 class="text-center">Matchs joués par équipe</h5>
+            <canvas id="matchsChart"></canvas>
+        </div>
+    </div>
+    <a href="{{ path('tournoi_show', {id: tournoi.id}) }}" class="btn btn-secondary mt-4">Retour au tournoi</a>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const labels = {{ classement|map(r => r.equipe.nom)|json_encode|raw }};
+        const victoires = {{ classement|map(r => r.victoires)|json_encode|raw }};
+        const buts = {{ classement|map(r => r.buts)|json_encode|raw }};
+        const fautes = {{ classement|map(r => r.fautes)|json_encode|raw }};
+        const jaunes = {{ classement|map(r => r.jaunes)|json_encode|raw }};
+        const rouges = {{ classement|map(r => r.rouges)|json_encode|raw }};
+        const matchs = {{ classement|map(r => r.matchs)|json_encode|raw }};
+
+        new Chart(document.getElementById('victoiresChart'), {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Victoires',
+                    data: victoires,
+                    backgroundColor: [
+                        '#007bff', '#28a745', '#ffc107', '#dc3545', '#6f42c1', '#fd7e14', '#20c997', '#e83e8c'
+                    ],
+                }]
+            },
+            options: {responsive: true, plugins: {legend: {position: 'bottom'}, title: {display: true, text: 'Victoires par équipe'}}}
+        });
+        new Chart(document.getElementById('butsChart'), {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Buts marqués',
+                    data: buts,
+                    backgroundColor: [
+                        '#007bff', '#28a745', '#ffc107', '#dc3545', '#6f42c1', '#fd7e14', '#20c997', '#e83e8c'
+                    ],
+                }]
+            },
+            options: {responsive: true, plugins: {legend: {position: 'bottom'}, title: {display: true, text: 'Buts marqués par équipe'}}}
+        });
+        new Chart(document.getElementById('fautesChart'), {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Fautes',
+                    data: fautes,
+                    backgroundColor: [
+                        '#007bff', '#28a745', '#ffc107', '#dc3545', '#6f42c1', '#fd7e14', '#20c997', '#e83e8c'
+                    ],
+                }]
+            },
+            options: {responsive: true, plugins: {legend: {position: 'bottom'}, title: {display: true, text: 'Fautes par équipe'}}}
+        });
+        new Chart(document.getElementById('jaunesChart'), {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Cartons jaunes',
+                    data: jaunes,
+                    backgroundColor: '#ffc107',
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {legend: {display: false}, title: {display: true, text: 'Cartons jaunes par équipe'}},
+                scales: {y: {beginAtZero: true}}
+            }
+        });
+        new Chart(document.getElementById('rougesChart'), {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Cartons rouges',
+                    data: rouges,
+                    backgroundColor: '#dc3545',
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {legend: {display: false}, title: {display: true, text: 'Cartons rouges par équipe'}},
+                scales: {y: {beginAtZero: true}}
+            }
+        });
+        new Chart(document.getElementById('matchsChart'), {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Matchs joués',
+                    data: matchs,
+                    backgroundColor: '#007bff',
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {legend: {display: false}, title: {display: true, text: 'Matchs joués par équipe'}},
+                scales: {y: {beginAtZero: true}}
+            }
+        });
+    </script>
+{% endblock %} 

@@ -197,4 +197,24 @@
             {% endfor %}
         {% endfor %}
     {% endif %}
+
+    {# Boutons de navigation en bas de page #}
+    <div class="mt-5 d-flex gap-2">
+        {% set statsReady = false %}
+        {% for tableau in tournoi.tableaus %}
+            {% set lastTour = tableauTours[tableau.id]|default({})|last %}
+            {% if lastTour is defined %}
+                {% set lastMatchs = lastTour[1] is defined ? lastTour[1] : lastTour %}
+                {% for match in lastMatchs %}
+                    {% if match.resultat %}
+                        {% set statsReady = true %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endfor %}
+        {% if statsReady %}
+            <a href="{{ path('tournoi_stats', {id: tournoi.id}) }}" class="btn btn-success">Voir les statistiques du tournoi</a>
+        {% endif %}
+        <a href="{{ path('tournoi_index') }}" class="btn btn-secondary">Retour à la liste des tournois</a>
+    </div>
 {% endblock %} 
